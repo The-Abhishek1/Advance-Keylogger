@@ -9,6 +9,7 @@ keys_information_e = "e_keys_log.txt"
 encrypted_files = [system_information_e, clipboard_information_e, keys_information_e]
 count = 0
 
+#Decrypting the sent file by keylogger
 for decrypting_file in encrypted_files:
     with open(encrypted_files[count], 'rb') as f:
         data = f.read()

